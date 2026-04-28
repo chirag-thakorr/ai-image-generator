@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from app.services.image_generator import generator
+from app.routes import upload
+
 
 app = FastAPI()
+app.include_router(upload.router)
 
 class PromptRequest(BaseModel):
     prompt: str

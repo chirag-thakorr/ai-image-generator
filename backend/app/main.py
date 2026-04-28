@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from app.services.image_generator import generator
 
 app = FastAPI()
 
@@ -12,7 +13,9 @@ def home():
 
 @app.post("/generate")
 def generate_image(data: PromptRequest):
+    image_path = generator.generate(data.prompt)
+
     return {
         "prompt": data.prompt,
-        "status": "received"
+        "image_path": image_path
     }

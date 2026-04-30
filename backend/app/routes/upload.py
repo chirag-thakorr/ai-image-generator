@@ -3,13 +3,17 @@ from typing import List
 import os
 from app.services.caption_service import caption_service
 import json
+from fastapi import Form
 
 router = APIRouter()
 
-UPLOAD_DIR = "data/uploads"
+# UPLOAD_DIR = "data/uploads"
+
 
 @router.post("/upload-images")
-async def upload_images(files: List[UploadFile] = File(...)):
+async def upload_images(user_id: str = Form(...), files: List[UploadFile] = File(...)):
+    UPLOAD_DIR = f"data/uploads/{user_id}"
+    # os.makedirs(upload_dir, exist_ok=True)
     os.makedirs(UPLOAD_DIR, exist_ok=True)
 
     saved_files = []

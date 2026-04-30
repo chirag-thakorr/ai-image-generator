@@ -2,7 +2,7 @@ from fastapi import APIRouter, UploadFile, File
 from typing import List
 import os
 from app.services.caption_service import caption_service
-
+import json
 
 router = APIRouter()
 
@@ -26,6 +26,16 @@ async def upload_images(files: List[UploadFile] = File(...)):
             "filename": file.filename,
             "caption": caption
         })
+
+        metadata = {
+            "image": file.filename,
+            "caption": caption
+        }
+
+        metadata_file = os.path.join(UPLOAD_DIR, "metadata.jsonl")
+
+        with open(metadata_file, "a", encoding="utf-8") as meta_file:
+            meta_file.write(json.dumps(metadata) + "\n")
         # saved_files.append(file.filename)
 
     return {

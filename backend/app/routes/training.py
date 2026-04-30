@@ -3,11 +3,43 @@ from pydantic import BaseModel
 import uuid
 import os
 import json
+import asyncio
+
 
 router = APIRouter()
 
 # Temporary in-memory job storage
 training_jobs = {}
+
+
+async def simulate_training(job_id: str):
+
+    # Step 1
+    # training_jobs[job_id]["status"] = "training"
+    user_id = training_jobs[job_id]["user_id"]
+
+    # Create LoRA output folder
+    output_dir = f"models/lora/{user_id}"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Fake checkpoint file (temporary)
+    checkpoint_path = os.path.join(output_dir, "adapter_config.json")
+
+    with open(checkpoint_path, "w") as f:
+        json.dump({
+            "status": "trained",
+            "user_id": user_id
+        }, f)
+
+    training_jobs[job_id]["status"] = "completed"
+    training_jobs[job_id]["output_dir"] = output_dir
+
+    # Simulate training time
+    # await asyncio.sleep(10)
+
+    # Step 2
+    # training_jobs[job_id]["status"] = "completed"
+
 
 
 class TrainingRequest(BaseModel):
@@ -44,6 +76,8 @@ async def start_training(data: TrainingRequest):
         "status": "queued",
         "images": len(dataset)
     }
+
+    asyncio.create_task(simulate_training(job_id))
 
     return {
         "message": "Training job created successfully",

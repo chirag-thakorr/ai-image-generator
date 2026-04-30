@@ -1,6 +1,8 @@
 from fastapi import APIRouter, UploadFile, File
 from typing import List
 import os
+from app.services.caption_service import caption_service
+
 
 router = APIRouter()
 
@@ -18,8 +20,13 @@ async def upload_images(files: List[UploadFile] = File(...)):
         with open(file_path, "wb") as f:
             content = await file.read()
             f.write(content)
+        caption = caption_service.generate_caption(file_path)
 
-        saved_files.append(file.filename)
+        saved_files.append({
+            "filename": file.filename,
+            "caption": caption
+        })
+        # saved_files.append(file.filename)
 
     return {
         "message": "Files uploaded successfully",

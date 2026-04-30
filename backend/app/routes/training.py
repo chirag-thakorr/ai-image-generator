@@ -50,3 +50,23 @@ async def start_training(data: TrainingRequest):
         "job_id": job_id,
         "status": "queued"
     }
+
+
+
+
+@router.get("/training-status/{job_id}")
+async def get_training_status(job_id: str):
+
+    job = training_jobs.get(job_id)
+
+    if not job:
+        return {
+            "error": "Training job not found"
+        }
+
+    return {
+        "job_id": job_id,
+        "status": job["status"],
+        "user_id": job["user_id"],
+        "images": job["images"]
+    }
